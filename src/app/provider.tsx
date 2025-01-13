@@ -1,7 +1,7 @@
 
 'use client'
 import { Fragment, useRef } from "react";
-import { AppStore, store } from "./libs/store";
+import { AppStore, store } from "@/libs/store";
 import { Provider } from "react-redux";
 
 interface IProvider {
