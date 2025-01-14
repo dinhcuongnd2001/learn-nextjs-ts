@@ -1,10 +1,13 @@
-import { configureStore } from "@reduxjs/toolkit"
+import { combineSlices, configureStore } from "@reduxjs/toolkit"
+import { loadingSlice } from "./features/loading/loadingSlice";
+
+
+const rootReducer = combineSlices(loadingSlice);
 
 export const store = () => {
     return configureStore({
-        reducer: {
-        }
-    })
+      reducer: rootReducer,
+    });
 }
 
 
