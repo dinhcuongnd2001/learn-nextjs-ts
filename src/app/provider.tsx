@@ -3,6 +3,7 @@
 import { Fragment, useRef } from "react";
 import { AppStore, store } from "@/libs/store";
 import { Provider } from "react-redux";
+import { ToastContainer } from "react-toastify";
 
 interface IProvider {
     children: React.ReactNode
@@ -20,9 +21,10 @@ export default function AppProvider({children}: IProvider) {
         // storeRef.current.dispatch(initializeCount(count))
     }
 
-    return <Fragment>
-        <Provider store={storeRef.current}>
-            {children}
-        </Provider>
-    </Fragment>
+    return (
+      <Fragment>
+        <Provider store={storeRef.current}>{children}</Provider>
+        <ToastContainer />
+      </Fragment>
+    );
 }

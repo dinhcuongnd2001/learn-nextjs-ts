@@ -1,91 +1,233 @@
 "use client"
 import { axiosPublic } from "@/configs/axios";
-import { IResponse } from "@/interfaces";
+import { IResponse, IUser } from "@/interfaces";
+import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-
-interface IRegister {
-    username: string,
-    password: string,
-}
+import { toast } from "react-toastify";
+import { ValidationError, object, string } from "yup";
 
 const Register = () => {
 
-    const [info, setInfo] = useState<IRegister>({ username: "", password: "" });
+  type FieldType =
+    | "username"
+    | "password"
+    | "firstName"
+    | "lastName"
+    | "repeatPassword"
+    | "dob";
 
-    const handleLogin = async ({
-      username,
-      password,
-    }: IRegister): Promise<boolean> => {
-      try {
-        return true;
-      } catch (error) {
-        return false;
-      }
-    };
+  interface IRegister extends IUser {
+    repeatPassword: string
+  }
 
-    const handleUpdateInfo = ({
-      field,
-      value,
-    }: {
-      field: "username" | "password";
-      value: string;
-    }) => {
-      setInfo({ ...info, [field]: value });
-    };
-  
-    const handleSubmit = async () => {
-      const check = await handleLogin({ ...info });
-      if (check) alert("login successfull, you can test token now");
-      else alert("Login error");
-    };
-  
-    return (
-      <div>
-        <div className="mb-6">
-          <label
-            htmlFor="email"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Your email
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={info.username}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="name@flowbite.com"
-            required
-            onChange={(e) =>
-              handleUpdateInfo({ field: "username", value: e.target.value })
-            }
-          />
+  const [info, setInfo] = useState<IRegister>({
+    username: "",
+    password: "",
+    dob: "",
+    firstName: "",
+    lastName: "",
+    repeatPassword: "",
+  });
+
+  const router = useRouter();
+
+
+  // schema for validate
+
+  let registerSchema = object({
+    repeatPassword: string()
+      .required("Repeat password is required")
+      .test(
+        "re-check password",
+        "The repeat password must be equal with password",
+        (value) => value === info.password
+      ),
+
+    password: string().matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
+      message:
+        "Password must be minimum 8 characters, at least one letter and one number",
+    }),
+
+    username: string()
+      .required("Username is required")
+      .min(5, "Username must be at least 5 characters"),
+
+    dob: string().required("Date of birth is required"),
+    lastName: string().required("Last name is required"),
+    firstName: string().required("First name is required"),
+  });
+
+  // handle on change
+  const handleUpdateInfo = ({
+    field,
+    value,
+  }: {
+    field: FieldType;
+    value: string;
+  }) => {
+    setInfo({ ...info, [field]: value });
+  };
+
+
+  // handle submit
+  const handleSubmit = async () => {
+    try {
+      // validate form
+      await registerSchema.validate(info);
+
+      // handle register
+
+      const data = await axiosPublic.post<any, IResponse<any>>("users", {
+        ...info,
+        role: ["USER"],
+      });
+      
+      router.push("/login");
+    } catch (err) {
+      let message = "";
+      if (err instanceof ValidationError) {
+        message = err.errors[0];
+      } 
+
+      if (err instanceof AxiosError) {
+        console.log("err :", err);
+        message = err.response?.data.message || "something went wrong";
+      } 
+      toast.error(message);
+    }
+    return;
+  };
+
+  return (
+    <div className="py-10">
+      <form
+        className="max-w-md mx-auto"
+        onSubmit={(event) => {
+          event.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="grid md:grid-cols-2 md:gap-6">
+          <div className="relative z-0 w-full mb-5 group">
+            <input
+              onChange={(e) =>
+                handleUpdateInfo({
+                  field: "firstName",
+                  value: e.target.value,
+                })
+              }
+              type="text"
+              name="floating_first_name"
+              id="floating_first_name"
+              className="form-input peer"
+              value={info.firstName}
+              placeholder=" "
+            />
+            <label htmlFor="floating_first_name" className="form-label">
+              First name
+            </label>
+          </div>
+
+          <div className="relative z-0 w-full mb-5 group">
+            <input
+              onChange={(e) =>
+                handleUpdateInfo({ field: "lastName", value: e.target.value })
+              }
+              type="text"
+              name="floating_last_name"
+              id="floating_last_name"
+              className="form-input peer"
+              placeholder=" "
+              value={info.lastName}
+            />
+            <label htmlFor="floating_last_name" className="form-label">
+              Last name
+            </label>
+          </div>
         </div>
-        <div className="mb-6">
-          <label
-            htmlFor="password"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Your password
-          </label>
-          <input
-            type="password"
-            id="password"
-            value={info.password}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            required
-            onChange={(e) =>
-              handleUpdateInfo({ field: "password", value: e.target.value })
-            }
-          />
+
+        <div className="grid md:grid-cols-2 md:gap-6">
+          <div className="relative z-0 w-full mb-5 group">
+            <input
+              onChange={(e) =>
+                handleUpdateInfo({ field: "username", value: e.target.value })
+              }
+              type="text"
+              name="floating_email"
+              id="floating_email"
+              value={info.username}
+              className="form-input peer"
+              placeholder=" "
+            />
+            <label htmlFor="floating_email" className="form-label">
+              Username
+            </label>
+          </div>
+
+          <div className="relative z-0 w-full mb-5 group">
+            <input
+              onChange={(e) =>
+                handleUpdateInfo({ field: "dob", value: e.target.value })
+              }
+              type="date"
+              name="floating_dob"
+              id="floating_dob"
+              className="form-input peer"
+              placeholder=" "
+              value={info.dob}
+            />
+            <label htmlFor="floating_dob" className="form-label">
+              Dob
+            </label>
+          </div>
         </div>
-        <button
-          onClick={handleSubmit}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
+
+        <div className="grid md:grid-cols-2 md:gap-6">
+          <div className="relative z-0 w-full mb-5 group">
+            <input
+              onChange={(e) =>
+                handleUpdateInfo({ field: "password", value: e.target.value })
+              }
+              type="password"
+              value={info.password}
+              name="floating_password"
+              id="floating_password"
+              className="form-input peer"
+              placeholder=" "
+            />
+            <label htmlFor="floating_password" className="form-label">
+              Password
+            </label>
+          </div>
+
+          <div className="relative z-0 w-full mb-5 group">
+            <input
+              onChange={(e) =>
+                handleUpdateInfo({
+                  field: "repeatPassword",
+                  value: e.target.value,
+                })
+              }
+              value={info.repeatPassword}
+              type="password"
+              name="repeat_password"
+              id="floating_repeat_password"
+              className="form-input peer"
+              placeholder=" "
+            />
+            <label htmlFor="floating_repeat_password" className="form-label">
+              Confirm password
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" className="form-btn">
           Submit
         </button>
-      </div>
-    );
+      </form>
+    </div>
+  );
 }
 
 export default Register;
