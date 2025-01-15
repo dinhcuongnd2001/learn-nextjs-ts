@@ -1,5 +1,5 @@
 "use client"
-import {  IUser } from "@/interfaces";
+import {  IRegister, IUser } from "@/interfaces";
 import { useAppDispatch} from "@/libs/hooks";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
@@ -18,9 +18,6 @@ const Register = () => {
     | "repeatPassword"
     | "dob";
 
-  interface IRegister extends IUser {
-    repeatPassword: string
-  }
 
   const [info, setInfo] = useState<IRegister>({
     username: "",
@@ -32,7 +29,6 @@ const Register = () => {
   });
 
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const { axiosPublic } = useAxiosPublic();
 
   // schema for validate
@@ -97,7 +93,6 @@ const Register = () => {
       } 
       toast.error(message);
     }
-    return;
   };
 
   return (

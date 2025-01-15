@@ -8,5 +8,8 @@ export interface IUser {
 }
 
 export interface ILogin extends Pick<IUser, 'username' | "password"> {
-
 }
+
+export interface IRegister extends IUser {
+  repeatPassword: string;
+};

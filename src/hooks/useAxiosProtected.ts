@@ -28,7 +28,7 @@ const useAxiosProtected = () => {
       return response;
     
     } catch (error) {
-      
+      console.log("error :", error)
       throw error;
     
     } finally {
