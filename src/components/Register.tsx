@@ -1,11 +1,12 @@
 "use client"
-import { axiosPublic } from "@/configs/axios";
-import { IResponse, IUser } from "@/interfaces";
+import {  IUser } from "@/interfaces";
+import { useAppDispatch} from "@/libs/hooks";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { ValidationError, object, string } from "yup";
+import useAxiosPublic from "@/hooks/useAxiosPublic";
 
 const Register = () => {
 
@@ -31,7 +32,8 @@ const Register = () => {
   });
 
   const router = useRouter();
-
+  const dispatch = useAppDispatch();
+  const { axiosPublic } = useAxiosPublic();
 
   // schema for validate
 
@@ -77,12 +79,12 @@ const Register = () => {
       await registerSchema.validate(info);
 
       // handle register
-
-      const data = await axiosPublic.post<any, IResponse<any>>("users", {
-        ...info,
-        role: ["USER"],
+      const data = await axiosPublic<IRegister, IUser>({
+        method: "POST",
+        data: { ...info, roles: ["USER"] },
+        url: "users",
       });
-      
+
       router.push("/login");
     } catch (err) {
       let message = "";
@@ -91,7 +93,6 @@ const Register = () => {
       } 
 
       if (err instanceof AxiosError) {
-        console.log("err :", err);
         message = err.response?.data.message || "something went wrong";
       } 
       toast.error(message);
