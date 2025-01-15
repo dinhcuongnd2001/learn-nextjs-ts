@@ -4,10 +4,10 @@ import { refreshToken } from "../common";
 
 // base axios
 const axiosProtected = axios.create({
-    baseURL: "/api",
-    headers: {
-        "Content-Type": "application/json",
-    },
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 interface CustomAxiosConfig extends InternalAxiosRequestConfig {
@@ -18,7 +18,7 @@ interface CustomAxiosConfig extends InternalAxiosRequestConfig {
 // we will get accessToken from localhost and bind it into header;
 axiosProtected.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        const accessToken = JSON.parse(String(localStorage.getItem("accessToken")));
+        const accessToken = String(localStorage.getItem("accessToken"));
         if (accessToken) {
             config.headers = {
                 ...config.headers,

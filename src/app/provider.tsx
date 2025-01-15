@@ -1,9 +1,10 @@
 
 'use client'
 import { Fragment, useRef } from "react";
-import { AppStore, store } from "./libs/store";
+import { AppStore, store } from "@/libs/store";
 import { Provider } from "react-redux";
-
+import { ToastContainer } from "react-toastify";
+import Loading from "@/components/loading/Loading";
 interface IProvider {
     children: React.ReactNode
 }
@@ -20,9 +21,14 @@ export default function AppProvider({children}: IProvider) {
         // storeRef.current.dispatch(initializeCount(count))
     }
 
-    return <Fragment>
+    return (
+      <Fragment>
         <Provider store={storeRef.current}>
+          <Loading>
             {children}
+          </Loading>
+        <ToastContainer />
         </Provider>
-    </Fragment>
+      </Fragment>
+    );
 }
