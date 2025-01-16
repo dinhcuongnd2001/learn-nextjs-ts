@@ -6,10 +6,3 @@ export interface IUser {
     "dob": string,
     "roles"?: string[]
 }
-
-export interface ILogin extends Pick<IUser, 'username' | "password"> {
-}
-
-export interface IRegister extends IUser {
-  repeatPassword: string;
-};

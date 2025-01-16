@@ -7,9 +7,9 @@ const maxAge = parseInt(process.env.NEXT_PUBLIC_MAX_AGE || "10000");
 
 const fnRefreshToken = async () : Promise<IToken> => {
     // step 1 get refresh-token from localhost
-    const refreshToken = JSON.parse(
-        String(localStorage.getItem("refreshToken"))
-      );
+    const refreshToken = String(localStorage.getItem("refreshToken"))
+    const token = String(localStorage.getItem("accessToken"))
+
 
     // step 2: use refresh token call to server to get new token pair
 
@@ -18,11 +18,9 @@ const fnRefreshToken = async () : Promise<IToken> => {
             result,
           } = await axiosPublic.post<never, IResponse<IToken>>(
             "/auth/refresh-token",
-            undefined,
             {
-              headers: {
-                Authorization: `BEARER ${refreshToken}`,
-              },
+              token, 
+              refreshToken
             }
           );
         
@@ -32,8 +30,8 @@ const fnRefreshToken = async () : Promise<IToken> => {
 
         // set new token pain to localstorage;
         const {accessToken, refreshToken: newRefreshToken} = result;
-        localStorage.setItem("accessToken", JSON.stringify(accessToken));
-        localStorage.setItem("refreshToken", JSON.stringify(newRefreshToken));
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", newRefreshToken);
         return { accessToken, refreshToken: newRefreshToken };
 
     } catch (error) {

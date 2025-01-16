@@ -1,12 +1,13 @@
 "use client"
-import {  IRegister, IUser } from "@/interfaces";
-import { useAppDispatch} from "@/libs/hooks";
+import {  IUser } from "@/interfaces";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { ValidationError, object, string } from "yup";
+import { ValidationError} from "yup";
 import useAxiosPublic from "@/hooks/useAxiosPublic";
+import Input from "./common/Input";
+import { TRegister, registerSchema } from "@/validation";
 
 const Register = () => {
 
@@ -19,7 +20,7 @@ const Register = () => {
     | "dob";
 
 
-  const [info, setInfo] = useState<IRegister>({
+  const [info, setInfo] = useState<TRegister>({
     username: "",
     password: "",
     dob: "",
@@ -30,31 +31,6 @@ const Register = () => {
 
   const router = useRouter();
   const { axiosPublic } = useAxiosPublic();
-
-  // schema for validate
-
-  let registerSchema = object({
-    repeatPassword: string()
-      .required("Repeat password is required")
-      .test(
-        "re-check password",
-        "The repeat password must be equal with password",
-        (value) => value === info.password
-      ),
-
-    password: string().matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
-      message:
-        "Password must be minimum 8 characters, at least one letter and one number",
-    }),
-
-    username: string()
-      .required("Username is required")
-      .min(5, "Username must be at least 5 characters"),
-
-    dob: string().required("Date of birth is required"),
-    lastName: string().required("Last name is required"),
-    firstName: string().required("First name is required"),
-  });
 
   // handle on change
   const handleUpdateInfo = ({
@@ -75,7 +51,7 @@ const Register = () => {
       await registerSchema.validate(info);
 
       // handle register
-      const data = await axiosPublic<IRegister, IUser>({
+      const data = await axiosPublic<TRegister, IUser>({
         method: "POST",
         data: { ...info, roles: ["USER"] },
         url: "users",
@@ -105,117 +81,58 @@ const Register = () => {
         }}
       >
         <div className="grid md:grid-cols-2 md:gap-6">
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              onChange={(e) =>
-                handleUpdateInfo({
-                  field: "firstName",
-                  value: e.target.value,
-                })
-              }
-              type="text"
-              name="floating_first_name"
-              id="floating_first_name"
-              className="form-input peer"
-              value={info.firstName}
-              placeholder=" "
-            />
-            <label htmlFor="floating_first_name" className="form-label">
-              First name
-            </label>
-          </div>
+          <Input
+            value={info.firstName}
+            label="First name"
+            onChange={(val) =>
+              handleUpdateInfo({ field: "firstName", value: val })
+            }
+          />
 
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              onChange={(e) =>
-                handleUpdateInfo({ field: "lastName", value: e.target.value })
-              }
-              type="text"
-              name="floating_last_name"
-              id="floating_last_name"
-              className="form-input peer"
-              placeholder=" "
-              value={info.lastName}
-            />
-            <label htmlFor="floating_last_name" className="form-label">
-              Last name
-            </label>
-          </div>
+          <Input
+            value={info.lastName}
+            label="Last name"
+            onChange={(val) =>
+              handleUpdateInfo({ field: "lastName", value: val })
+            }
+          />
         </div>
 
         <div className="grid md:grid-cols-2 md:gap-6">
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              onChange={(e) =>
-                handleUpdateInfo({ field: "username", value: e.target.value })
-              }
-              type="text"
-              name="floating_email"
-              id="floating_email"
-              value={info.username}
-              className="form-input peer"
-              placeholder=" "
-            />
-            <label htmlFor="floating_email" className="form-label">
-              Username
-            </label>
-          </div>
+          <Input
+            value={info.username}
+            label="Username"
+            onChange={(val) =>
+              handleUpdateInfo({ field: "username", value: val })
+            }
+          />
 
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              onChange={(e) =>
-                handleUpdateInfo({ field: "dob", value: e.target.value })
-              }
-              type="date"
-              name="floating_dob"
-              id="floating_dob"
-              className="form-input peer"
-              placeholder=" "
-              value={info.dob}
-            />
-            <label htmlFor="floating_dob" className="form-label">
-              Dob
-            </label>
-          </div>
+          <Input
+            value={info.dob}
+            label="Username"
+            onChange={(val) => handleUpdateInfo({ field: "dob", value: val })}
+            type="date"
+          />
         </div>
 
         <div className="grid md:grid-cols-2 md:gap-6">
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              onChange={(e) =>
-                handleUpdateInfo({ field: "password", value: e.target.value })
-              }
-              type="password"
-              value={info.password}
-              name="floating_password"
-              id="floating_password"
-              className="form-input peer"
-              placeholder=" "
-            />
-            <label htmlFor="floating_password" className="form-label">
-              Password
-            </label>
-          </div>
+          <Input
+            value={info.password}
+            label="Password"
+            onChange={(val) =>
+              handleUpdateInfo({ field: "password", value: val })
+            }
+            type="password"
+          />
 
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              onChange={(e) =>
-                handleUpdateInfo({
-                  field: "repeatPassword",
-                  value: e.target.value,
-                })
-              }
-              value={info.repeatPassword}
-              type="password"
-              name="repeat_password"
-              id="floating_repeat_password"
-              className="form-input peer"
-              placeholder=" "
-            />
-            <label htmlFor="floating_repeat_password" className="form-label">
-              Confirm password
-            </label>
-          </div>
+          <Input
+            value={info.repeatPassword}
+            label="Confirm password"
+            onChange={(val) =>
+              handleUpdateInfo({ field: "repeatPassword", value: val })
+            }
+            type="password"
+          />
         </div>
 
         <button type="submit" className="form-btn">

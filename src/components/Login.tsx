@@ -1,38 +1,26 @@
 "use client"
 import useAxiosProtected from "@/hooks/useAxiosProtected";
 import useAxiosPublic from "@/hooks/useAxiosPublic";
-import { ILogin, IToken, IUser } from "@/interfaces";
+import {  IToken, IUser } from "@/interfaces";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { ValidationError, object, string } from "yup";
+import { ValidationError } from "yup";
+import Input from "./common/Input";
+import { TLogin, loginSchema } from "@/validation";
 
 export default function Login() {
   type FieldType = "username" | "password";
 
 
-  const [info, setInfo] = useState<ILogin>({
+  const [info, setInfo] = useState<TLogin>({
     username: "",
     password: "",
   });
 
   const { axiosPublic } = useAxiosPublic();
-  const { axiosProtected } = useAxiosProtected();
   const router = useRouter();
-
-  // schema for validate
-  let loginSchema = object({
-
-    password: string().matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
-      message:
-        "Password must be minimum 8 characters, at least one letter and one number",
-    }),
-
-    username: string()
-      .required("Username is required")
-      .min(5, "Username must be at least 5 characters"),
-  });
 
   // handle on change
   const handleUpdateInfo = ({
@@ -52,7 +40,7 @@ export default function Login() {
       await loginSchema.validate(info);
 
       // handle register
-      const data = await axiosPublic<ILogin, IToken>({
+      const data = await axiosPublic<TLogin, IToken>({
         method: "POST",
         data: info,
         url: "auth/log-in",
@@ -65,13 +53,6 @@ export default function Login() {
       // set refresh and access token to localstorage;
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-
-      // test get userId
-
-      const data1 = await axiosProtected<any, IUser>({
-        method: "GET",
-        url: "users/my-info",
-      });
 
       router.push("/");
     
@@ -98,42 +79,22 @@ export default function Login() {
         }}
       >
         <div className="grid md:grid-cols-2 md:gap-6">
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              onChange={(e) =>
-                handleUpdateInfo({
-                  field: "username",
-                  value: e.target.value,
-                })
-              }
-              type="text"
-              name="floating_first_name"
-              id="floating_first_name"
-              className="form-input peer"
-              value={info.username}
-              placeholder=" "
-            />
-            <label htmlFor="floating_first_name" className="form-label">
-              Username
-            </label>
-          </div>
+          <Input
+            value={info.username}
+            label="Username"
+            onChange={(val) =>
+              handleUpdateInfo({ field: "username", value: val })
+            }
+          />
 
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              onChange={(e) =>
-                handleUpdateInfo({ field: "password", value: e.target.value })
-              }
-              type="text"
-              name="floating_last_name"
-              id="floating_last_name"
-              className="form-input peer"
-              placeholder=" "
-              value={info.password}
-            />
-            <label htmlFor="floating_last_name" className="form-label">
-              Password
-            </label>
-          </div>
+          <Input
+            value={info.password}
+            label="Password"
+            onChange={(val) =>
+              handleUpdateInfo({ field: "password", value: val })
+            }
+            type="password"
+          />
         </div>
 
         <button type="submit" className="form-btn">
