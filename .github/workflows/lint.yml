@@ -16,6 +16,4 @@ jobs:
           node-version: 18
       - run: npm install # or yarn install
       - uses: sibiraj-s/action-eslint@v3
-
       - run:  npm run lint # or yarn install
-      - uses: sibiraj-s/action-eslint@v3
