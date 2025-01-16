@@ -51,7 +51,7 @@ const Register = () => {
       await registerSchema.validate(info);
 
       // handle register
-      const data = await axiosPublic<TRegister, IUser>({
+      await axiosPublic<TRegister, IUser>({
         method: "POST",
         data: { ...info, roles: ["USER"] },
         url: "users",

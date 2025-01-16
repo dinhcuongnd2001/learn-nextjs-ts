@@ -35,6 +35,7 @@ const fnRefreshToken = async () : Promise<IToken> => {
         return { accessToken, refreshToken: newRefreshToken };
 
     } catch (error) {
+        console.log("🚀 ~ fnRefreshToken ~ error:", error)
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("accessToken");
         return { accessToken: "", refreshToken: "" };

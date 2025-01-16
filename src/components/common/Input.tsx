@@ -15,12 +15,14 @@ interface IInput {
 
 export default function Input({value, onChange, placeholder = "", label, type = "text", id}  : IInput) {
   
+  const handelChange = (val : string) => {
+    if(onChange) onChange(val);
+  }
+  
   return (
     <div className="relative z-0 w-full mb-5 group">
       <input
-        onChange={(e) => {
-          onChange && onChange(e.target.value);
-        }}
+        onChange={(e) => handelChange(e.target.value)}
         type={type}
         value={value}
         placeholder={placeholder}
