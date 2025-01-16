@@ -1,7 +1,6 @@
 "use client"
-import useAxiosProtected from "@/hooks/useAxiosProtected";
 import useAxiosPublic from "@/hooks/useAxiosPublic";
-import {  IToken, IUser } from "@/interfaces";
+import {  IToken } from "@/interfaces";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

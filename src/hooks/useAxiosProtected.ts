@@ -3,7 +3,6 @@ import { IResponse } from "@/interfaces";
 import { IAxiosAPI } from "@/interfaces/resquest.interface";
 import { updateStatus } from "@/libs/features/loading/loadingSlice";
 import { useAppDispatch } from "@/libs/hooks";
-import { Method } from "axios";
 
 const useAxiosProtected = () => {
   const dispatch = useAppDispatch();
