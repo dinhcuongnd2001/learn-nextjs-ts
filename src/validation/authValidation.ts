@@ -1,7 +1,7 @@
 import { object, string, InferType  } from "yup";
 
 
-export let registerSchema = object({
+export const registerSchema = object({
   repeatPassword: string()
     .required("Repeat password is required")
     .test(
@@ -32,7 +32,7 @@ export let registerSchema = object({
 
 
 
-export let loginSchema = registerSchema.pick(['password', "username"]);
+export const loginSchema = registerSchema.pick(['password', "username"]);
 
 export type TLogin = InferType<typeof loginSchema>;
 export type TRegister = InferType<typeof registerSchema>;
