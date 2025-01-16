@@ -8,12 +8,10 @@ export default function Home() {
   
 
   const handleClick = async () => {
-    const data = await axiosProtected<any, IUser>({
+    await axiosProtected<any, IUser>({
       "url": "users/my-info",
       method: "GET"
     })
-
-    console.log('data :',data.result?.firstName);
   }
 
   return (
