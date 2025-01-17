@@ -1,2 +1,2 @@
 export * from './axios.public';
-export * from './axios.protected'
+export * from './axios.protected';

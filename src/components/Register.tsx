@@ -1,48 +1,33 @@
-"use client"
-import {  IUser } from "@/interfaces";
-import { AxiosError } from "axios";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "react-toastify";
-import { ValidationError} from "yup";
-import useAxiosPublic from "@/hooks/useAxiosPublic";
-import Input from "./common/Input";
-import { TRegister, registerSchema } from "@/validation";
+'use client';
+import { IUser } from '@/interfaces';
+import { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { ValidationError } from 'yup';
+import useAxiosPublic from '@/hooks/useAxiosPublic';
+import Input from './common/Input';
+import { TRegister, registerSchema } from '@/validation';
 
 const Register = () => {
-
-  type FieldType =
-    | "username"
-    | "password"
-    | "firstName"
-    | "lastName"
-    | "repeatPassword"
-    | "dob";
-
+  type FieldType = 'username' | 'password' | 'firstName' | 'lastName' | 'repeatPassword' | 'dob';
 
   const [info, setInfo] = useState<TRegister>({
-    username: "",
-    password: "",
-    dob: "",
-    firstName: "",
-    lastName: "",
-    repeatPassword: "",
+    username: '',
+    password: '',
+    dob: '',
+    firstName: '',
+    lastName: '',
+    repeatPassword: '',
   });
 
   const router = useRouter();
   const { axiosPublic } = useAxiosPublic();
 
   // handle on change
-  const handleUpdateInfo = ({
-    field,
-    value,
-  }: {
-    field: FieldType;
-    value: string;
-  }) => {
+  const handleUpdateInfo = ({ field, value }: { field: FieldType; value: string }) => {
     setInfo({ ...info, [field]: value });
   };
-
 
   // handle submit
   const handleSubmit = async () => {
@@ -52,21 +37,21 @@ const Register = () => {
 
       // handle register
       await axiosPublic<TRegister, IUser>({
-        method: "POST",
-        data: { ...info, roles: ["USER"] },
-        url: "users",
+        method: 'POST',
+        data: { ...info, roles: ['USER'] },
+        url: 'users',
       });
 
-      router.push("/login");
+      router.push('/login');
     } catch (err) {
-      let message = "";
+      let message = '';
       if (err instanceof ValidationError) {
         message = err.errors[0];
-      } 
+      }
 
       if (err instanceof AxiosError) {
-        message = err.response?.data.message || "something went wrong";
-      } 
+        message = err.response?.data.message || 'something went wrong';
+      }
       toast.error(message);
     }
   };
@@ -75,7 +60,7 @@ const Register = () => {
     <div className="py-10">
       <form
         className="max-w-md mx-auto"
-        onSubmit={(event) => {
+        onSubmit={event => {
           event.preventDefault();
           handleSubmit();
         }}
@@ -84,17 +69,13 @@ const Register = () => {
           <Input
             value={info.firstName}
             label="First name"
-            onChange={(val) =>
-              handleUpdateInfo({ field: "firstName", value: val })
-            }
+            onChange={val => handleUpdateInfo({ field: 'firstName', value: val })}
           />
 
           <Input
             value={info.lastName}
             label="Last name"
-            onChange={(val) =>
-              handleUpdateInfo({ field: "lastName", value: val })
-            }
+            onChange={val => handleUpdateInfo({ field: 'lastName', value: val })}
           />
         </div>
 
@@ -102,15 +83,13 @@ const Register = () => {
           <Input
             value={info.username}
             label="Username"
-            onChange={(val) =>
-              handleUpdateInfo({ field: "username", value: val })
-            }
+            onChange={val => handleUpdateInfo({ field: 'username', value: val })}
           />
 
           <Input
             value={info.dob}
             label="Username"
-            onChange={(val) => handleUpdateInfo({ field: "dob", value: val })}
+            onChange={val => handleUpdateInfo({ field: 'dob', value: val })}
             type="date"
           />
         </div>
@@ -119,18 +98,14 @@ const Register = () => {
           <Input
             value={info.password}
             label="Password"
-            onChange={(val) =>
-              handleUpdateInfo({ field: "password", value: val })
-            }
+            onChange={val => handleUpdateInfo({ field: 'password', value: val })}
             type="password"
           />
 
           <Input
             value={info.repeatPassword}
             label="Confirm password"
-            onChange={(val) =>
-              handleUpdateInfo({ field: "repeatPassword", value: val })
-            }
+            onChange={val => handleUpdateInfo({ field: 'repeatPassword', value: val })}
             type="password"
           />
         </div>
@@ -141,6 +116,6 @@ const Register = () => {
       </form>
     </div>
   );
-}
+};
 
 export default Register;

@@ -1,1 +1,1 @@
-export * from './authValidation'
+export * from './authValidation';

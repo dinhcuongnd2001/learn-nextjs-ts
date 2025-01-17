@@ -1,23 +1,22 @@
-import { TLoading } from "@/interfaces/loading.interface";
-import { createAppSlice } from "@/libs/CreateAppSlice";
-import { PayloadAction } from "@reduxjs/toolkit";
+import { TLoading } from '@/interfaces/loading.interface';
+import { createAppSlice } from '@/libs/CreateAppSlice';
+import { PayloadAction } from '@reduxjs/toolkit';
 
 export interface ILoadingSlice {
   status: TLoading;
 }
 
-
 const initialState: ILoadingSlice = {
-  status: "idle",
+  status: 'idle',
 };
 
 // If you are not using async thunks you can use the standalone `createSlice`.
 export const loadingSlice = createAppSlice({
-  name: "loading",
+  name: 'loading',
   // `createSlice` will infer the state type from the `initialState` argument,
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
-  reducers: (create) => ({
+  reducers: create => ({
     updateStatus: create.reducer((state, action: PayloadAction<TLoading>) => {
       // Redux Toolkit allows us to write "mutating" logic in reducers. It
       // doesn't actually mutate the state because it uses the Immer library,
@@ -55,7 +54,7 @@ export const loadingSlice = createAppSlice({
   }),
 
   selectors: {
-    selectStatus: (loading) => loading.status,
+    selectStatus: loading => loading.status,
   },
 });
 
@@ -64,4 +63,3 @@ export const { updateStatus } = loadingSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const { selectStatus } = loadingSlice.selectors;
-

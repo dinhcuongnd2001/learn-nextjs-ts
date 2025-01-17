@@ -1,1 +1,1 @@
-export type TLoading = "idle" | "loading" | "failed";
+export type TLoading = 'idle' | 'loading' | 'failed';
