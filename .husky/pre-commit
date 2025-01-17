@@ -1,1 +1,2 @@
 yarn validate-pre-commit
+git add .

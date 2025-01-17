@@ -1,18 +1,16 @@
-'use client'
-import useAxiosProtected from "@/hooks/useAxiosProtected";
-import { IUser } from "@/interfaces";
+'use client';
+import useAxiosProtected from '@/hooks/useAxiosProtected';
+import { IUser } from '@/interfaces';
 
 export default function Home() {
-  
-  const {axiosProtected} = useAxiosProtected();
-  
+  const { axiosProtected } = useAxiosProtected();
 
   const handleClick = async () => {
     await axiosProtected<any, IUser>({
-      "url": "users/my-info",
-      method: "GET"
-    })
-  }
+      url: 'users/my-info',
+      method: 'GET',
+    });
+  };
 
   return (
     <div>

@@ -1,34 +1,27 @@
-"use client"
-import useAxiosPublic from "@/hooks/useAxiosPublic";
-import {  IToken } from "@/interfaces";
-import { AxiosError } from "axios";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "react-toastify";
-import { ValidationError } from "yup";
-import Input from "./common/Input";
-import { TLogin, loginSchema } from "@/validation";
+'use client';
+import useAxiosPublic from '@/hooks/useAxiosPublic';
+import { IToken } from '@/interfaces';
+import { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { ValidationError } from 'yup';
+import Input from './common/Input';
+import { TLogin, loginSchema } from '@/validation';
 
 export default function Login() {
-  type FieldType = "username" | "password";
-
+  type FieldType = 'username' | 'password';
 
   const [info, setInfo] = useState<TLogin>({
-    username: "",
-    password: "",
+    username: '',
+    password: '',
   });
 
   const { axiosPublic } = useAxiosPublic();
   const router = useRouter();
 
   // handle on change
-  const handleUpdateInfo = ({
-    field,
-    value,
-  }: {
-    field: FieldType;
-    value: string;
-  }) => {
+  const handleUpdateInfo = ({ field, value }: { field: FieldType; value: string }) => {
     setInfo({ ...info, [field]: value });
   };
 
@@ -40,39 +33,38 @@ export default function Login() {
 
       // handle register
       const data = await axiosPublic<TLogin, IToken>({
-        method: "POST",
+        method: 'POST',
         data: info,
-        url: "auth/log-in",
+        url: 'auth/log-in',
       });
 
-      if(!data.result) return;
-      
-      const {accessToken, refreshToken} = data.result;
+      if (!data.result) return;
+
+      const { accessToken, refreshToken } = data.result;
 
       // set refresh and access token to localstorage;
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
 
-      router.push("/");
-    
+      router.push('/');
     } catch (err) {
-      let message = "";
+      let message = '';
       if (err instanceof ValidationError) {
         message = err.errors[0];
       }
 
       if (err instanceof AxiosError) {
-        message = err.response?.data.message || "something went wrong";
+        message = err.response?.data.message || 'something went wrong';
       }
       toast.error(message);
     }
-  }
+  };
 
   return (
     <div className="py-10">
       <form
         className="max-w-md mx-auto"
-        onSubmit={(event) => {
+        onSubmit={event => {
           event.preventDefault();
           handleSubmit();
         }}
@@ -81,17 +73,13 @@ export default function Login() {
           <Input
             value={info.username}
             label="Username"
-            onChange={(val) =>
-              handleUpdateInfo({ field: "username", value: val })
-            }
+            onChange={val => handleUpdateInfo({ field: 'username', value: val })}
           />
 
           <Input
             value={info.password}
             label="Password"
-            onChange={(val) =>
-              handleUpdateInfo({ field: "password", value: val })
-            }
+            onChange={val => handleUpdateInfo({ field: 'password', value: val })}
             type="password"
           />
         </div>
