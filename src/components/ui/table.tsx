@@ -1,8 +1,8 @@
 import * as React from 'react';
-
 import { cn } from '@/lib/utils';
 import PaginationComponent, { PaginationProp } from './pagination';
-
+import DiaLogComponent from './dialog';
+import { Pen, Trash } from 'lucide-react';
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
     <div className="relative w-full overflow-auto">
@@ -86,6 +86,10 @@ type ITabelProps<R extends Record<string, string | number>> = {
   cols: TableColumn<R>[];
   rows: R[];
   pagination?: PaginationProp;
+  update?: boolean;
+  delete?: boolean;
+  hanleClickUpdate?: (id: string) => void;
+  handleClickDelete?: (id: string) => void;
 };
 
 const TableComponent = <R extends Record<string, string | number>>({
@@ -93,9 +97,35 @@ const TableComponent = <R extends Record<string, string | number>>({
   rows,
   cols,
   pagination,
+  ...props
 }: ITabelProps<R>) => {
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [currentId, setCurrentid] = React.useState<string>('');
+
+  const handleUpdate = (id: string) => {
+    if (props.update && props.hanleClickUpdate) {
+      props.hanleClickUpdate(id);
+    }
+  };
+
+  const handleDelete = () => {
+    if (props.delete && props.handleClickDelete) props.handleClickDelete(currentId);
+  };
+
+  const onOpenChange = (stateDialog: boolean) => {
+    setOpen(stateDialog);
+  };
+
   return (
     <div>
+      <div className="w-full text-right">
+        <DiaLogComponent
+          open={open}
+          onClose={() => setOpen(false)}
+          onConfirm={handleDelete}
+          onOpenChange={onOpenChange}
+        />
+      </div>
       <Table>
         <TableCaption>{caption}</TableCaption>
         <TableHeader>
@@ -105,24 +135,51 @@ const TableComponent = <R extends Record<string, string | number>>({
                 {colHead.title}
               </TableHead>
             ))}
+
+            {props.update && <TableHead className="w-[100px] text-center">Update</TableHead>}
+            {props.delete && <TableHead className="w-[100px] text-center">Delete</TableHead>}
           </TableRow>
         </TableHeader>
 
         <TableBody>
-          {rows.map((row, ind) => (
-            <TableRow key={ind}>
-              {cols.map((col, col_ind) => (
-                <TableCell
-                  key={ind + '_' + col.key}
-                  className={col_ind == 0 ? 'font-medium' : col_ind == cols.length - 1 ? 'text-right' : ''}
-                >
-                  {row[col.key]}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
+          {rows.map((row, ind) => {
+            return (
+              <TableRow key={ind}>
+                {cols.map((col, col_ind) => (
+                  <TableCell
+                    key={ind + '_' + col.key}
+                    className={col_ind == 0 ? 'font-medium' : col_ind == cols.length - 1 ? 'text-right' : ''}
+                  >
+                    {row[col.key]}
+                  </TableCell>
+                ))}
+                {props.update && (
+                  <TableCell key={ind + '_' + row['id']} className="w-[100px]">
+                    <Pen
+                      className="cursor-pointer m-auto"
+                      onClick={() => {
+                        handleUpdate('' + row['id']);
+                      }}
+                    />
+                  </TableCell>
+                )}
+                {props.delete && (
+                  <TableCell key={ind + '__' + row['id']} className="w-[100px]">
+                    <Trash
+                      className="cursor-pointer m-auto"
+                      onClick={() => {
+                        setOpen(true);
+                        setCurrentid('' + row['id']);
+                      }}
+                    />
+                  </TableCell>
+                )}
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
+      <div className="mb-4"></div>
       {pagination?.totalPage && (
         <PaginationComponent
           current={pagination.current}
