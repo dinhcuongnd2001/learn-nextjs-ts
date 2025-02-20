@@ -15,10 +15,20 @@ const useAxiosProtected = () => {
     method,
     url,
     data,
+    params,
   }: IAxiosAPI<T>): Promise<IResponse<K> | IResponse<undefined>> => {
     try {
       // Loading
       dispatch(updateStatus('loading'));
+
+      if (params) {
+        url += '?';
+        for (const key in params) {
+          url += key + '=' + params[key] + '&';
+        }
+        // remove last character "&" in str
+        url = url.substring(0, url.length - 1);
+      }
 
       const response = await AxiosProtected<any, IResponse<K>>({
         method,

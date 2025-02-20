@@ -33,9 +33,7 @@ axiosProtected.interceptors.request.use(
 // handle refresh-token if the token invalid
 
 axiosProtected.interceptors.response.use(
-  response => {
-    return response.data;
-  },
+  respone => respone.data,
   async (err: AxiosError) => {
     // get config in error request to check the request has been re-sent?;
     const config = err.config as CustomAxiosConfig;

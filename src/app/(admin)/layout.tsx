@@ -5,7 +5,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
   return (
     <SidebarProvider>
       <AdminSidebar />
-      <main className='w-full p-5'>
+      <main className="w-full p-5">
         <SidebarTrigger />
         {children}
       </main>
