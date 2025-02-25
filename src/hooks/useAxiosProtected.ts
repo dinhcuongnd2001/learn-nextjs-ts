@@ -12,14 +12,16 @@ const useAxiosProtected = () => {
   const router = useRouter();
 
   const axiosProtected = async <T, K>({
-    method,
+    method = "GET",
     url,
     data,
     params,
+    loading = true
   }: IAxiosAPI<T>): Promise<IResponse<K> | IResponse<undefined>> => {
     try {
       // Loading
-      dispatch(updateStatus('loading'));
+      if(loading)
+        dispatch(updateStatus('loading'));
 
       if (params) {
         url += '?';
@@ -37,6 +39,7 @@ const useAxiosProtected = () => {
       });
 
       return response;
+
     } catch (error) {
       if (error instanceof AxiosError) {
         const status = error.status;
@@ -48,7 +51,8 @@ const useAxiosProtected = () => {
       return Promise.resolve<IResponse<undefined>>({});
     } finally {
       // stop loading
-      dispatch(updateStatus('idle'));
+      if(loading)
+        dispatch(updateStatus('idle'));
     }
   };
 

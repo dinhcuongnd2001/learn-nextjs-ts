@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import PaginationComponent, { PaginationProp } from './pagination';
-import DiaLogComponent from './dialog';
+import { DiaLogComponentDelete } from './dialog';
 import { Pen, Trash } from 'lucide-react';
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
@@ -110,6 +110,7 @@ const TableComponent = <R extends Record<string, string | number>>({
 
   const handleDelete = () => {
     if (props.delete && props.handleClickDelete) props.handleClickDelete(currentId);
+    setOpen(false);
   };
 
   const onOpenChange = (stateDialog: boolean) => {
@@ -119,9 +120,8 @@ const TableComponent = <R extends Record<string, string | number>>({
   return (
     <div>
       <div className="w-full text-right">
-        <DiaLogComponent
+        <DiaLogComponentDelete
           open={open}
-          onClose={() => setOpen(false)}
           onConfirm={handleDelete}
           onOpenChange={onOpenChange}
         />

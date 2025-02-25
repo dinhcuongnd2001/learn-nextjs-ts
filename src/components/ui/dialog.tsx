@@ -84,21 +84,20 @@ const DialogDescription = React.forwardRef<
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
-type DialogComponentProps = {
+type DialogComponentDeleteProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onClose?: () => void;
   onConfirm?: () => void;
 };
 
-const DiaLogComponent = ({ open, onClose, onConfirm, onOpenChange }: DialogComponentProps) => {
-  const handleClose = () => {
-    if (onClose) onClose();
-  };
+const DiaLogComponentDelete = ({ open, onConfirm, onOpenChange }: DialogComponentDeleteProps) => {
+  // const handleClose = () => {
+  //   if (onClose) onClose();
+  // };
 
   const handleConfirm = () => {
     if (onConfirm) onConfirm();
-    handleClose();
   };
 
   return (
@@ -112,9 +111,56 @@ const DiaLogComponent = ({ open, onClose, onConfirm, onOpenChange }: DialogCompo
         </DialogHeader>
         <DialogFooter>
           <Button onClick={handleConfirm}>Yes</Button>
-          <Button onClick={handleClose} className="">
-            No
-          </Button>
+          <DialogClose asChild>
+            <Button type="button" variant="secondary">
+              No
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+
+type DialogComponentProp = {
+  open: boolean,
+  onOpenChange: (status: boolean) => void,
+  title?: string,
+  description ?: string,
+  cancleOption?: boolean,
+  confirmOption?: boolean,
+  handleConfirm?: () => void,
+  body: React.ReactNode
+}
+
+const DialogComponent = ({open, onOpenChange, title, description, cancleOption, confirmOption, handleConfirm, body}: DialogComponentProp) => {
+
+  const handleClickConfirm = () => {
+    if(handleConfirm) handleConfirm();
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          {title ? <DialogTitle>{title}</DialogTitle> : null}
+          {description ? <DialogDescription>{description}</DialogDescription> : null}
+        </DialogHeader>
+
+        {/* ---------- Body start ---------- */}
+        {body}
+        {/* ---------- Body end ---------- */}
+
+        <DialogFooter>
+          {confirmOption ? <Button onClick={handleClickConfirm}>Confirm</Button> : null}
+          {cancleOption ? (
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Close
+              </Button>
+            </DialogClose>
+          ) : null}
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -132,6 +178,8 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  DiaLogComponentDelete,
+  DialogComponent,
 };
 
-export default DiaLogComponent;
+// export default DiaLogComponent;
