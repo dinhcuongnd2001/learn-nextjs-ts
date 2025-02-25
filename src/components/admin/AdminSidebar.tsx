@@ -1,3 +1,4 @@
+'use client'
 import {
   Sidebar,
   SidebarContent,
@@ -11,17 +12,19 @@ import {
 } from '@/components/ui/sidebar';
 import { Home, Settings, UserCog, ChartColumnStacked, LayoutList, ProjectorIcon } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
 export default function AdminSidebar() {
   // Manager.
   const items = [
     {
       title: 'Role',
-      url: 'role',
+      url: '/admin/role',
       icon: UserCog,
     },
     {
       title: 'Permission',
-      url: 'permission',
+      url: '/admin/permission',
       icon: Settings,
     },
   ];
@@ -31,17 +34,17 @@ export default function AdminSidebar() {
   const managerProduct = [
     {
       title: 'Category',
-      url: 'category',
+      url: '/admin/category',
       icon: ChartColumnStacked,
     },
     {
       title: 'Attribute',
-      url: 'attribute',
+      url: '/admin/attribute',
       icon: LayoutList,
     },
     {
       title: 'Product',
-      url: 'product',
+      url: '/admin/product',
       icon: ProjectorIcon,
     },
   ];
@@ -54,6 +57,10 @@ export default function AdminSidebar() {
     },
   ];
 
+  const pathname = usePathname();
+
+  console.log('pathname', pathname);
+  
   return (
     <Sidebar>
       <SidebarHeader>
@@ -71,7 +78,7 @@ export default function AdminSidebar() {
                 {each.data.map(item => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <Link href={item.url}>
+                      <Link className={`${pathname === item.url ? 'text-blue-600' : ''}`} href={item.url} replace={true}>
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>
