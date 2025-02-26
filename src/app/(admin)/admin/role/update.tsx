@@ -1,41 +1,36 @@
-import { DialogComponent } from "@/components/ui/dialog";
-import useAxiosProtected from "@/hooks/useAxiosProtected";
-import { useEffect, useMemo, useState } from "react";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { MultiSelect } from "@/components/ui/multiSelect";
-import { Pagination, Permission, Role } from "@/types";
+import { DialogComponent } from '@/components/ui/dialog';
+import useAxiosProtected from '@/hooks/useAxiosProtected';
+import { useEffect, useMemo, useState } from 'react';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { MultiSelect } from '@/components/ui/multiSelect';
+import { Pagination, Permission, Role, RoleRequest } from '@/types';
 
 type RoleUpdateProps = {
-  roleId?: string,
-  open: boolean,
-  setOpen: (status: boolean) => void,
-}
-
-type RoleUpdate = Pick<Role, "id" | "description" | "name"> & {
-  permissions: string[]
-}
-
+  roleId?: string;
+  open: boolean;
+  setOpen: (status: boolean) => void;
+};
 
 export default function RoleUpdate({ open, setOpen, roleId }: RoleUpdateProps) {
   const { axiosProtected } = useAxiosProtected();
-  const [role, setRole] = useState<RoleUpdate>();
+  const [role, setRole] = useState<RoleRequest>();
   const [permissions, setPermissions] = useState<Permission[]>([]);
 
   const getData = async () => {
-    const promiseGetRole = axiosProtected<any, Role>({ url: `roles/${roleId}` });
+    const promiseGetRole = axiosProtected<any, Role>({ url: `roles/${roleId}`, loading: false });
     const promiseGetListPermission = axiosProtected<any, Pagination<Permission>>({
       url: `permissions`,
       params: { pageSize: 1000 },
+      loading: false,
     });
 
     const [roleData, listPermission] = await Promise.all([promiseGetRole, promiseGetListPermission]);
 
     if (roleData.result) {
-      const {permissions, ...rest} = roleData.result;
-      setRole({...rest, permissions: [...permissions.map(permission => permission.id)]})
-    }
-    else setOpen(false);
+      const { permissions, ...rest } = roleData.result;
+      setRole({ ...rest, permissions: [...permissions.map(permission => permission.id)] });
+    } else setOpen(false);
 
     if (listPermission.result?.list) setPermissions(listPermission.result.list);
   };
@@ -44,14 +39,8 @@ export default function RoleUpdate({ open, setOpen, roleId }: RoleUpdateProps) {
     return permissions.map(permission => ({ label: permission.name, value: permission.id }));
   }, [permissions]);
 
-  const defaultValue = useMemo(() => {
-    if (!role) return [];
-    return role.permissions;
-  }, [role]);
-
   useEffect(() => {
     if (!roleId) return;
-
     getData();
   }, [roleId]);
 
@@ -60,17 +49,23 @@ export default function RoleUpdate({ open, setOpen, roleId }: RoleUpdateProps) {
   };
 
   const onMultiSelectChange = (value: string[]) => {
-    if(role)
-      setRole({ ...role, permissions: value });
+    if (role) setRole({ ...role, permissions: value });
   };
 
-  const handleConfirm = () => {
-    console.log("role :", role)
+  const handleConfirm = async () => {
+    await axiosProtected<any, Role>({
+      url: `roles/${roleId}`,
+      method: 'PUT',
+      data: role,
+      message: 'Update successfull',
+    });
+    setOpen(false);
   };
 
   const body: React.ReactNode = useMemo(() => {
     if (!role) return null;
 
+    const defaultValue = role.permissions;
     return (
       <div className="flex items-center flex-col gap-5">
         <div className="flex-1 w-full flex justify-start items-center gap-10">
@@ -110,7 +105,7 @@ export default function RoleUpdate({ open, setOpen, roleId }: RoleUpdateProps) {
         </div>
       </div>
     );
-  }, [role]);
+  }, [role, roleId]);
 
   return (
     <DialogComponent

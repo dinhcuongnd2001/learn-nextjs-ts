@@ -1,8 +1,11 @@
+'use client';
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import PaginationComponent, { PaginationProp } from './pagination';
 import { DiaLogComponentDelete } from './dialog';
 import { Pen, Trash } from 'lucide-react';
+import { Button } from './button';
+
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
     <div className="relative w-full overflow-auto">
@@ -88,8 +91,10 @@ type ITabelProps<R extends Record<string, string | number>> = {
   pagination?: PaginationProp;
   update?: boolean;
   delete?: boolean;
+  create?: boolean;
   hanleClickUpdate?: (id: string) => void;
   handleClickDelete?: (id: string) => void;
+  handleClickCreate?: () => void;
 };
 
 const TableComponent = <R extends Record<string, string | number>>({
@@ -120,12 +125,15 @@ const TableComponent = <R extends Record<string, string | number>>({
   return (
     <div>
       <div className="w-full text-right">
-        <DiaLogComponentDelete
-          open={open}
-          onConfirm={handleDelete}
-          onOpenChange={onOpenChange}
-        />
+        <DiaLogComponentDelete open={open} onConfirm={handleDelete} onOpenChange={onOpenChange} />
       </div>
+
+      {props.create ? (
+        <div className="w-full text-right">
+          <Button onClick={props.handleClickCreate}>Add</Button>
+        </div>
+      ) : null}
+
       <Table>
         <TableCaption>{caption}</TableCaption>
         <TableHeader>

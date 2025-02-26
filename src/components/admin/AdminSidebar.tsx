@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import {
   Sidebar,
   SidebarContent,
@@ -59,8 +59,6 @@ export default function AdminSidebar() {
 
   const pathname = usePathname();
 
-  console.log('pathname', pathname);
-  
   return (
     <Sidebar>
       <SidebarHeader>
@@ -78,7 +76,11 @@ export default function AdminSidebar() {
                 {each.data.map(item => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <Link className={`${pathname === item.url ? 'text-blue-600' : ''}`} href={item.url} replace={true}>
+                      <Link
+                        className={`${pathname === item.url ? 'text-blue-600' : ''}`}
+                        href={item.url}
+                        replace={true}
+                      >
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>

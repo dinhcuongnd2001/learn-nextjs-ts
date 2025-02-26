@@ -92,10 +92,6 @@ type DialogComponentDeleteProps = {
 };
 
 const DiaLogComponentDelete = ({ open, onConfirm, onOpenChange }: DialogComponentDeleteProps) => {
-  // const handleClose = () => {
-  //   if (onClose) onClose();
-  // };
-
   const handleConfirm = () => {
     if (onConfirm) onConfirm();
   };
@@ -122,29 +118,36 @@ const DiaLogComponentDelete = ({ open, onConfirm, onOpenChange }: DialogComponen
   );
 };
 
-
 type DialogComponentProp = {
-  open: boolean,
-  onOpenChange: (status: boolean) => void,
-  title?: string,
-  description ?: string,
-  cancleOption?: boolean,
-  confirmOption?: boolean,
-  handleConfirm?: () => void,
-  body: React.ReactNode
-}
+  open: boolean;
+  onOpenChange: (status: boolean) => void;
+  title: string;
+  description?: string;
+  cancleOption?: boolean;
+  confirmOption?: boolean;
+  handleConfirm?: () => void;
+  body: React.ReactNode;
+};
 
-const DialogComponent = ({open, onOpenChange, title, description, cancleOption, confirmOption, handleConfirm, body}: DialogComponentProp) => {
-
+const DialogComponent = ({
+  open,
+  onOpenChange,
+  title,
+  description,
+  cancleOption,
+  confirmOption,
+  handleConfirm,
+  body,
+}: DialogComponentProp) => {
   const handleClickConfirm = () => {
-    if(handleConfirm) handleConfirm();
-  }
+    if (handleConfirm) handleConfirm();
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          {title ? <DialogTitle>{title}</DialogTitle> : null}
+          <DialogTitle>{title}</DialogTitle>
           {description ? <DialogDescription>{description}</DialogDescription> : null}
         </DialogHeader>
 
@@ -181,5 +184,3 @@ export {
   DiaLogComponentDelete,
   DialogComponent,
 };
-
-// export default DiaLogComponent;
