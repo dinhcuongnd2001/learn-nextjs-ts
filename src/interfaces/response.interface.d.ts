@@ -3,3 +3,8 @@ export interface IResponse<T> {
   result?: T;
   message?: string;
 }
+
+export interface IResponseError {
+  code: string;
+  message: string;
+}

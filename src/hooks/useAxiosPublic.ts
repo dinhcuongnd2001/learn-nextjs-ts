@@ -13,6 +13,7 @@ const useAxiosPublic = () => {
     method,
     url,
     data,
+    headerConfig,
   }: IAxiosAPI<T>): Promise<IResponse<K> | IResponse<undefined>> => {
     try {
       // loading
@@ -22,6 +23,7 @@ const useAxiosPublic = () => {
         method,
         url,
         data,
+        headers: headerConfig,
       });
 
       return response;

@@ -1,9 +1,13 @@
 import { InternalAxiosRequestConfig, Method } from 'axios';
 
 export interface IAxiosAPI<T> {
-  method: Method;
   url: string;
+  method?: Method;
   data?: T;
+  params?: Record<string, string | number>;
+  loading?: boolean;
+  message?: string;
+  headerConfig?: Record<string, string| number>
 }
 
 export interface CustomAxiosConfig extends InternalAxiosRequestConfig {
