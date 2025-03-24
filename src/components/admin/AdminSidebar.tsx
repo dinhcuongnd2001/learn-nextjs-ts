@@ -1,63 +1,58 @@
 'use client';
 import {
+  NavMain,
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { Home, Settings, UserCog, ChartColumnStacked, LayoutList, ProjectorIcon } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Home, Bot, BookOpen, ShoppingCart} from 'lucide-react';
 
 export default function AdminSidebar() {
-  // Manager.
-  const items = [
-    {
-      title: 'Role',
-      url: '/admin/role',
-      icon: UserCog,
-    },
-    {
-      title: 'Permission',
-      url: '/admin/permission',
-      icon: Settings,
-    },
-  ];
 
-  // Product
-
-  const managerProduct = [
-    {
-      title: 'Category',
-      url: '/admin/category',
-      icon: ChartColumnStacked,
-    },
-    {
-      title: 'Attribute',
-      url: '/admin/attribute',
-      icon: LayoutList,
-    },
-    {
-      title: 'Product',
-      url: '/admin/product',
-      icon: ProjectorIcon,
-    },
-  ];
-
-  const contents = [
-    { key: 'User', data: items },
-    {
-      key: 'Product',
-      data: managerProduct,
-    },
-  ];
-
-  const pathname = usePathname();
+  const data = {
+    navMain: [
+      {
+        title: 'General',
+        url: '#',
+        icon: Bot,
+        items: [
+          {
+            title: 'Role',
+            url: '/admin/role',
+          },
+          {
+            title: 'Permission',
+            url: '/admin/permission',
+          },
+        ],
+      },
+      {
+        title: 'Ecommerce',
+        url: '#',
+        icon: ShoppingCart,
+        items: [
+          {
+            title: 'Category',
+            url: '/admin/category',
+          },
+          {
+            title: 'Attribute',
+            url: '/admin/attribute',
+          },
+          {
+            title: 'Product',
+            url: '/admin/product',
+            items: [
+              {
+                title: 'Create',
+                url: '/admin/product/create',
+              }
+            ],
+          },
+        ],
+      },
+    ],
+  };
 
   return (
     <Sidebar>
@@ -66,31 +61,8 @@ export default function AdminSidebar() {
           <Home /> Admin
         </div>
       </SidebarHeader>
-
       <SidebarContent>
-        {contents.map((each, ind) => (
-          <SidebarGroup key={ind}>
-            <SidebarGroupLabel>{each.key}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {each.data.map(item => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <Link
-                        className={`${pathname === item.url ? 'text-blue-600' : ''}`}
-                        href={item.url}
-                        replace={true}
-                      >
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+        <NavMain items={data.navMain} />
       </SidebarContent>
     </Sidebar>
   );

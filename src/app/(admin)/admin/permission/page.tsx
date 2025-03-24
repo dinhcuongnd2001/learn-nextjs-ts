@@ -1,24 +1,15 @@
 'use client';
+import isAdmin from '@/components/common/IsAdmin';
 import TableComponent from '@/components/ui/table';
 import useAxiosProtected from '@/hooks/useAxiosProtected';
+import { Pagination, Permission } from '@/types';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-
-type IPermission = {
-  name: string;
-  description: string;
-  id: string;
-};
-
-type PermissionResponse = {
-  list: IPermission[];
-  totalPage: number;
-};
 
 const PermissionManager = () => {
   const [page, setPage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(0);
-  const [permission, setPermission] = useState<IPermission[]>([]);
+  const [permission, setPermission] = useState<Permission[]>([]);
   const { axiosProtected } = useAxiosProtected();
 
   const onChangePage = (current: number) => {
@@ -26,7 +17,7 @@ const PermissionManager = () => {
   };
 
   const handleGetPermission = async () => {
-    const data = await axiosProtected<any, PermissionResponse>({
+    const data = await axiosProtected<any, Pagination<Permission>>({
       method: 'GET',
       url: 'permissions',
       params: {
@@ -79,4 +70,4 @@ const PermissionManager = () => {
   );
 };
 
-export default PermissionManager;
+export default isAdmin(PermissionManager);

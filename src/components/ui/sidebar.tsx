@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { VariantProps, cva } from 'class-variance-authority';
-import { PanelLeft } from 'lucide-react';
+import { ChevronRight, LucideIcon, PanelLeft } from 'lucide-react';
 
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
@@ -13,6 +13,9 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './collapsible';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -611,6 +614,89 @@ const SidebarMenuSubButton = React.forwardRef<
 });
 SidebarMenuSubButton.displayName = 'SidebarMenuSubButton';
 
+
+const NavMain = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<'div'> & {
+    items: {
+      title: string;
+      url: string;
+      icon?: LucideIcon;
+      isActive?: boolean;
+      items?: {
+        title: string;
+        url: string;
+        items?: {
+          title: string;
+          url: string;
+        }[];
+      }[];
+    }[];
+  }
+>(({ items }, ref) => {
+  const pathname = usePathname();
+  return (
+    <SidebarGroup ref={ref}>
+      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarMenu>
+        {items.map(item => (
+          <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
+            <SidebarMenuItem>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton tooltip={item.title}>
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
+                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  {item.items?.map(subItem => {
+                    if(subItem.items) {
+                      return (
+                        <SidebarMenuSub key={subItem.title}>
+                          {subItem.items.map(sub => (
+                            <SidebarMenuSubItem key={sub.title}>
+                              <SidebarMenuSubButton asChild>
+                                <Link
+                                  className={`${pathname == sub.url ? '!text-blue-600' : ''}`}
+                                  href={sub.url}
+                                  replace={true}
+                                >
+                                  <span>{sub.title}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      );
+                    }
+                    else return (
+                      <SidebarMenuSubItem key={subItem.title}>
+                        <SidebarMenuSubButton asChild>
+                          <Link
+                            className={`${pathname == subItem.url ? '!text-blue-600' : ''}`}
+                            href={subItem.url}
+                            replace={true}
+                          >
+                            <span>{subItem.title}</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    );
+                  })}
+                </SidebarMenuSub>
+              </CollapsibleContent>
+            </SidebarMenuItem>
+          </Collapsible>
+        ))}
+      </SidebarMenu>
+    </SidebarGroup>
+  );
+});
+
+NavMain.displayName = 'NavMain';
+
 export {
   Sidebar,
   SidebarContent,
@@ -636,4 +722,5 @@ export {
   SidebarSeparator,
   SidebarTrigger,
   useSidebar,
+  NavMain,
 };

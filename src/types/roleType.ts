@@ -1,4 +1,4 @@
-import { Permission } from './typePermission';
+import { Permission } from './permissionType';
 
 export type Role = {
   name: string;

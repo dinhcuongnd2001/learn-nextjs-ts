@@ -7,6 +7,7 @@ export interface IAxiosAPI<T> {
   params?: Record<string, string | number>;
   loading?: boolean;
   message?: string;
+  headerConfig?: Record<string, string| number>
 }
 
 export interface CustomAxiosConfig extends InternalAxiosRequestConfig {

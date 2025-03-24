@@ -5,6 +5,7 @@ import PaginationComponent, { PaginationProp } from './pagination';
 import { DiaLogComponentDelete } from './dialog';
 import { Pen, Trash } from 'lucide-react';
 import { Button } from './button';
+import Image from 'next/image';
 
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
@@ -79,12 +80,13 @@ TableCaption.displayName = 'TableCaption';
 
 // -------------- table component
 
-type TableColumn<R extends Record<string, string | number>> = {
+type TableColumn<R> = {
   key: Extract<keyof R, string>;
   title: string;
+  type?: "text" | "images"
 };
 
-type ITabelProps<R extends Record<string, string | number>> = {
+type ITabelProps<R> = {
   caption: string;
   cols: TableColumn<R>[];
   rows: R[];
@@ -156,9 +158,19 @@ const TableComponent = <R extends Record<string, string | number>>({
                 {cols.map((col, col_ind) => (
                   <TableCell
                     key={ind + '_' + col.key}
-                    className={col_ind == 0 ? 'font-medium' : col_ind == cols.length - 1 ? 'text-right' : ''}
+                    className={col_ind == 0 ? 'font-medium' : col_ind == cols.length - 1 ? 'float-right' : ''}
                   >
-                    {row[col.key]}
+                    {col.type == 'images' ? (
+                      <Image
+                        src={""+row[col.key]}
+                        alt="#thumbnail_error"
+                        width={100}
+                        height={100}
+                        className="object-contain"
+                      />
+                    ) : (
+                      row[col.key]
+                    )}
                   </TableCell>
                 ))}
                 {props.update && (
@@ -188,13 +200,13 @@ const TableComponent = <R extends Record<string, string | number>>({
         </TableBody>
       </Table>
       <div className="mb-4"></div>
-      {pagination?.totalPage && (
+      {pagination?.totalPage  ? (
         <PaginationComponent
           current={pagination.current}
           totalPage={pagination.totalPage}
           onChangePage={pagination.onChangePage}
         />
-      )}
+      ): null}
     </div>
   );
 };
