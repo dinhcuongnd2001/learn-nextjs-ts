@@ -1,0 +1,48 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum TypeOrder {
+  PENDING // Dồn Đơn
+  CREATED // Tạo đơn ở web
+  FULL_CREATED // tạo cả đơn đồng bộ bên SPX
+  CANCEL // Huỷ đơn
+}
+
+model Order {
+  id  String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  customerName String
+  customerPhone String
+  address String
+  cod Float
+  feeShip Float @default(15000)
+  partialPaid Float @default(50000)
+  total Float
+  tracking String?
+  type TypeOrder
+}
+
+model Invoice {
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  supplier  String
+  total     Float
+  product   String
+  note      String?
+}
+
+model Statistical {
+  id String @id @default(uuid())
+  revenue Float
+  refund  Float
+  investment Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
