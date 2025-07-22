@@ -6,6 +6,7 @@ import { updateStatus } from '@/libs/features/loading/loadingSlice';
 import { useAppDispatch } from '@/libs/hooks';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
+import queryString from 'query-string';
 
 const useAxiosProtected = () => {
   const dispatch = useAppDispatch();
@@ -15,14 +16,16 @@ const useAxiosProtected = () => {
     method,
     url,
     data,
+    param,
   }: IAxiosAPI<T>): Promise<IResponse<K> | IResponse<undefined>> => {
     try {
       // Loading
       dispatch(updateStatus('loading'));
+      const newUrl = param ? url + '?' + queryString.stringify(JSON.parse(param)) : url;
 
       const response = await AxiosProtected<any, IResponse<K>>({
         method,
-        url,
+        url: newUrl,
         data,
       });
 

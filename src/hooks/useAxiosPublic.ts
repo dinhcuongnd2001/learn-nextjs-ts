@@ -4,6 +4,7 @@ import { IAxiosAPI } from '@/interfaces/resquest.interface';
 import { updateStatus } from '@/libs/features/loading/loadingSlice';
 import { useAppDispatch } from '@/libs/hooks';
 import { AxiosError } from 'axios';
+import queryString from 'query-string';
 import { toast } from 'react-toastify';
 
 const useAxiosPublic = () => {
@@ -13,14 +14,16 @@ const useAxiosPublic = () => {
     method,
     url,
     data,
+    param,
   }: IAxiosAPI<T>): Promise<IResponse<K> | IResponse<undefined>> => {
     try {
       // loading
       dispatch(updateStatus('loading'));
+      const newUrl = param ? url + '?' + queryString.stringify(JSON.parse(param)) : url;
 
       const response = await AxiosPublic<any, IResponse<K>>({
         method,
-        url,
+        url: newUrl,
         data,
       });
 

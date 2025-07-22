@@ -4,6 +4,7 @@ export interface IAxiosAPI<T> {
   method: Method;
   url: string;
   data?: T;
+  param?: string;
 }
 
 export interface CustomAxiosConfig extends InternalAxiosRequestConfig {

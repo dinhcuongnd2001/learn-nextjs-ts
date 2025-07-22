@@ -43,6 +43,7 @@ model Statistical {
   revenue Float
   refund  Float
   investment Float
+  total Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
